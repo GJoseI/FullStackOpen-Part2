@@ -37,6 +37,15 @@ const App = () => {
       setNewName("");
       setNewNumber("");
     }
+
+    axios
+      .post('http://localhost:3001/persons', personObject) //fix
+      .then(response => {
+        console.log(response);
+        setPersons(persons.concat(response.data))
+        setNewName("");
+        setNewNumber("");
+      })
   };
 
   const handleNameChange = (event) => setNewName(event.target.value);

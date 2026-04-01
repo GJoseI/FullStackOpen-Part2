@@ -4,6 +4,7 @@ import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import personsService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,40 +13,32 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    console.log('effect');
-    axios
-    .get("http://localhost:3001/persons")
-    .then((response) => {
-      console.log('promise fulfilled')
-      setPersons(response.data);
+    personsService
+    .getAll()
+    .then((intialPersons) => {
+      setPersons(intialPersons);
     });
   }, []);
-  console.log('render', persons.length, 'persons')
 
   const addPerson = (event) => {
     event.preventDefault();
-    if (persons.find((person) => person.name === newName)) {
+    if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
-      setNewName("");
     } else {
       const personObject = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1,
       };
-      setPersons(persons.concat(personObject));
-      setNewName("");
-      setNewNumber("");
+      
+      personsService
+        .create(personObject)
+        .then(returnedPerson => {
+          console.log(returnedPerson);
+          setPersons(persons.concat(returnedPerson))
+        })
     }
-
-    axios
-      .post('http://localhost:3001/persons', personObject) //fix
-      .then(response => {
-        console.log(response);
-        setPersons(persons.concat(response.data))
-        setNewName("");
-        setNewNumber("");
-      })
+    setNewName("");
+    setNewNumber("");
   };
 
   const handleNameChange = (event) => setNewName(event.target.value);

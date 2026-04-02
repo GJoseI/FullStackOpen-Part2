@@ -13,9 +13,7 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    personsService
-    .getAll()
-    .then((intialPersons) => {
+    personsService.getAll().then((intialPersons) => {
       setPersons(intialPersons);
     });
   }, []);
@@ -29,16 +27,21 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      
-      personsService
-        .create(personObject)
-        .then(returnedPerson => {
-          console.log(returnedPerson);
-          setPersons(persons.concat(returnedPerson))
-        })
+
+      personsService.create(personObject).then((returnedPerson) => {
+        console.log(returnedPerson);
+        setPersons(persons.concat(returnedPerson));
+      });
     }
     setNewName("");
     setNewNumber("");
+  };
+
+  const handleDelete = (name, id) => {
+    if(confirm(`Delete ${name} ?`)){
+      personsService.deletePerson(id);
+      setPersons(persons.filter(person => person.id !== id));
+    }
   };
 
   const handleNameChange = (event) => setNewName(event.target.value);
@@ -62,7 +65,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={filterPersons} />
+      <Persons persons={filterPersons} handleDelete={handleDelete}/>
     </div>
   );
 };

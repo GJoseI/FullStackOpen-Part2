@@ -35,6 +35,7 @@ const App = () => {
     }
     setNewName("");
     setNewNumber("");
+    //hola
   };
 
   const handleDelete = (name, id) => {

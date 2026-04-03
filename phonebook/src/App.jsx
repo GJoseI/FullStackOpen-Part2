@@ -18,30 +18,45 @@ const App = () => {
     });
   }, []);
 
-  const addPerson = (event) => {
-    event.preventDefault();
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
-    } else {
-      const personObject = {
-        name: newName,
-        number: newNumber,
-      };
-
-      personsService.create(personObject).then((returnedPerson) => {
-        console.log(returnedPerson);
-        setPersons(persons.concat(returnedPerson));
-      });
-    }
+  const addPerson = () => {
+    const personObject = {
+      name: newName,
+      number: newNumber,
+    };
+    personsService.create(personObject).then((returnedPerson) => {
+      console.log(returnedPerson);
+      setPersons(persons.concat(returnedPerson));
+    });
     setNewName("");
     setNewNumber("");
-    //hola
   };
 
   const handleDelete = (name, id) => {
-    if(confirm(`Delete ${name} ?`)){
+    if (confirm(`Delete ${name} ?`)) {
       personsService.deletePerson(id);
-      setPersons(persons.filter(person => person.id !== id));
+      setPersons(persons.filter((person) => person.id !== id));
+    }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (persons.some((person) => person.name === newName)) {
+      if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const p = persons.find((p) => p.name === newName);
+        const changedPerson = { ...p, number: newNumber };
+
+        personsService.update(p.id, changedPerson).then((returnedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id === p.id ? returnedPerson : person)
+          );
+        });
+        
+        setNewName("");
+        setNewNumber("");
+      }
+    }else {
+      addPerson()
     }
   };
 
@@ -59,14 +74,14 @@ const App = () => {
       <Filter value={filter} onChange={handleFilterChange} />
       <h2>add a new</h2>
       <PersonForm
-        onSubmit={addPerson}
+        handleSubmit={handleSubmit}
         newName={newName}
         newNumber={newNumber}
         handleNameChange={handleNameChange}
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={filterPersons} handleDelete={handleDelete}/>
+      <Persons persons={filterPersons} handleDelete={handleDelete} />
     </div>
   );
 };

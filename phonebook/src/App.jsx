@@ -1,16 +1,16 @@
-import { useReducer, useState } from "react";
-import { useEffect } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import personsService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     personsService.getAll().then((intialPersons) => {
@@ -23,10 +23,18 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    personsService.create(personObject).then((returnedPerson) => {
-      console.log(returnedPerson);
-      setPersons(persons.concat(returnedPerson));
-    });
+    personsService
+      .create(personObject)
+      .then((returnedPerson) => {
+        console.log(returnedPerson);
+        setPersons(persons.concat(returnedPerson));
+      })
+      .then(() => {
+        setMessage(`Added ${newName}`);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+      });
     setNewName("");
     setNewNumber("");
   };
@@ -41,22 +49,35 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (persons.some((person) => person.name === newName)) {
-      if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+      if (
+        confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`,
+        )
+      ) {
         const p = persons.find((p) => p.name === newName);
         const changedPerson = { ...p, number: newNumber };
 
-        personsService.update(p.id, changedPerson).then((returnedPerson) => {
-          setPersons(
-            persons.map((person) =>
-              person.id === p.id ? returnedPerson : person)
-          );
-        });
-        
+        personsService
+          .update(p.id, changedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id === p.id ? returnedPerson : person,
+              ),
+            );
+          })
+          .then(() => {
+            setMessage(`Updated ${newName}'s number`);
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+          });
+
         setNewName("");
         setNewNumber("");
       }
-    }else {
-      addPerson()
+    } else {
+      addPerson();
     }
   };
 
@@ -71,6 +92,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter value={filter} onChange={handleFilterChange} />
       <h2>add a new</h2>
       <PersonForm

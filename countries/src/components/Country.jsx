@@ -1,16 +1,14 @@
-import Language from "./Language";
-
 const Country = ({ country }) => {
-  const imgUrl = country[0].flags.png;
+  const imgUrl = country.flags.png;
   return (
     <div>
-      <h1>{country[0].name.common}</h1>
-      <div>Capital: {country[0].capital}</div>
-      <div>Area: {country[0].area}</div>
+      <h1>{country.name.common}</h1>
+      <div>Capital: {country.capital}</div>
+      <div>Area: {country.area}</div>
       <h2>Languages</h2>
       <ul>
-        {Object.entries(country[0].languages).map(([key, value]) => (
-          <Language key={key} value={value} />
+        {Object.entries(country.languages).map(([key, value]) => (
+          <li key={key}>{value}</li>
         ))}
       </ul>
       <img src={imgUrl} alt="Flag" />

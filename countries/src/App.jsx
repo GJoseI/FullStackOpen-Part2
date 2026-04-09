@@ -25,7 +25,7 @@ const App = () => {
   return (
     <div>
       <Find value={findCountry} onChange={handleFindCountryChange} />
-      <Countries countries={filterCountries} />
+      <Countries countries={filterCountries} setFindCountry={setFindCountry}/>
     </div>
   );
 };

@@ -8,6 +8,8 @@ const App = () => {
   const [findCountry, setFindCountry] = useState("");
   const [countries, setCountries] = useState([]);
 
+  const api_key = import.meta.env.VITE_WEATHER_API_KEY;
+
   useEffect(() => {
     axios
       .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
@@ -16,16 +18,19 @@ const App = () => {
       });
   }, []);
 
-  const handleFindCountryChange = (event) => setFindCountry(event.target.value);
-
   const filterCountries = countries.filter((country) =>
     country.name.common.toLowerCase().includes(findCountry.toLowerCase()),
   );
+  const handleFindCountryChange = (event) => setFindCountry(event.target.value);
 
   return (
     <div>
       <Find value={findCountry} onChange={handleFindCountryChange} />
-      <Countries countries={filterCountries} setFindCountry={setFindCountry}/>
+      <Countries
+        countries={filterCountries}
+        setFindCountry={setFindCountry}
+        api_key={api_key}
+      />
     </div>
   );
 };

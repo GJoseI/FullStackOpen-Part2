@@ -1,4 +1,4 @@
-const Country = ({ country }) => {
+const Country = ({ country, weather }) => {
   const imgUrl = country.flags.png;
   return (
     <div>
@@ -12,6 +12,13 @@ const Country = ({ country }) => {
         ))}
       </ul>
       <img src={imgUrl} alt="Flag" />
+      <h2>Weather in {country.capital[0]}</h2>
+      <p>Temperature {weather.main.temp - 273.15}°C</p>
+      <img
+        src={`https://openweathermap.org/payload/api/media/file/${weather.weather[0].icon}.png`}
+        alt="Weather icon"
+      ></img>
+      <p>Wind {weather.wind.speed} m/s</p>
     </div>
   );
 };

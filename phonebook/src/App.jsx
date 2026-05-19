@@ -36,6 +36,12 @@ const App = () => {
         setTimeout(() => {
           setMessage(null);
         }, 5000);
+      })
+      .catch((error) => {
+        setErrorMessage(`${error.response.data.error}`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
     setNewName("");
     setNewNumber("");
@@ -75,6 +81,12 @@ const App = () => {
             }, 5000);
           })
           .catch((error) => {
+            setErrorMessage(`${error.response.data.error}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          })
+          .catch((error) => {
             setErrorMessage(
               `Information of ${newName} has already been removed from the server`,
             );
@@ -104,7 +116,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={message} />
-      <ErrorNotification message={errorMessage}/>
+      <ErrorNotification message={errorMessage} />
       <Filter value={filter} onChange={handleFilterChange} />
       <h2>add a new</h2>
       <PersonForm
